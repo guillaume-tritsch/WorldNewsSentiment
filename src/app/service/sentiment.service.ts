@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 })
 export class SentimentService {
 
+  public list!: any[];
+
   public result: Subject<number>;
 
   private newsList: any[] = [];
@@ -20,11 +22,15 @@ export class SentimentService {
 
     var sentiment = new Sentiment();
     this._api.getPosts().subscribe(e => {
+
       this.newsList = e.news
       var t: any[] = []
       this.newsList.forEach(e => {
-        t.push(sentiment.analyze(e.title).score)
+        e["sentiment"] = sentiment.analyze(e.title).score;
+        t.push(e["sentiment"])
       })
+
+      this.list = e.news //.sort((a:any,b:any) => a.sentiment > b.sentiment)
 
       t = t.sort()
       t = t.filter(e => (e != 0))

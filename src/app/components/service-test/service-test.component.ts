@@ -12,7 +12,10 @@ export class ServiceTestComponent {
   @ViewChild('inside') inside!: ElementRef;
   public emoji!: string;
 
+  public sentiment: SentimentService;
+
   constructor(private _sentiment: SentimentService) {
+    this.sentiment = _sentiment;
     _sentiment.result.subscribe(e => this.showResult(e))
   }
 
@@ -27,6 +30,11 @@ export class ServiceTestComponent {
       this.inside.nativeElement.style.height = `${actu + Math.ceil((obj - actu) /9)}px`;
       actu = actu + Math.ceil((obj - actu) / 9)
       this.emoji = this.getEmoji((actu * 10 / this.progressBar.nativeElement.getBoundingClientRect().height)-5)
+      this.inside.nativeElement.children[0].style.filter = `hue-rotate(-${actu * 130 / this.progressBar.nativeElement.getBoundingClientRect().height}deg)`
+
+      if (actu >= obj) {
+        this.inside.nativeElement.classList.add('animationFinish')
+      }
     })
 
   }
@@ -53,7 +61,7 @@ export class ServiceTestComponent {
     } else if (result > -0.25) {
       return "🙁"
     } else if (result > -0.5) {
-      return "😧"
+      return "😦"
     } else if (result > -1) {
       return "😓"
     } else if (result > -1.5) {
